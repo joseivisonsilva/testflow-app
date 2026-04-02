@@ -9,6 +9,15 @@ import { canDelete, canEdit } from '@/lib/auth/roles';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { formatDate } from '@/lib/utils/date';
 
+// components/TestCasesHeader.tsx
+'use client'
+import { useAuth } from '@/hooks/useAuth'
+import Link from 'next/link'
+import { AppRole } from '@/hooks/useAuth'
+
+
+
+
 /**
  * Lista principal de casos de teste.
  */
@@ -100,4 +109,43 @@ export default async function TestCasesPage() {
       </main>
     </div>
   );
+}
+
+
+export function TestCasesHeader() {
+  const { permissions } = useAuth()
+
+  if (!permissions.isAuthenticated) return null
+
+  const getButtonText = () => {
+    if (permissions.role === 'VIEWER') return '👁️ Visualizar Módulos'
+    if (permissions.role === 'EDITOR') return '✏️ Gerenciar Módulos'
+    return '🏗️ Gerenciar Módulos'
+  }
+
+  return (
+    <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            Gestão de Casos de Testes
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Perfil: <span className="font-semibold capitalize">{permissions.role}</span>
+          </p>
+        </div>
+        
+        <Link
+          href="/modules"
+          className={`px-6 py-3 rounded-xl font-semibold shadow-lg transition-all duration-200 ${
+            permissions.canCreate 
+              ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:shadow-xl hover:-translate-y-0.5 hover:from-blue-700 hover:to-blue-800' 
+              : 'bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200'
+          }`}
+        >
+          {getButtonText()}
+        </Link>
+      </div>
+    </div>
+  )
 }

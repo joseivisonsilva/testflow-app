@@ -1,0 +1,2 @@
+-- Criar a função get_current_user_role()
+-- Criar as políticas RLS
